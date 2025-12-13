@@ -21,9 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     alert("Login realizado com sucesso!");
-    window.location.href = "Principal/Home.html";
+    window.location.href ="pages/Principal/Home.html";
   });
 });
+
 
 
 
