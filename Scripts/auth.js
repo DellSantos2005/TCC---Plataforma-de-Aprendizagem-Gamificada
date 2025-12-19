@@ -1,13 +1,17 @@
-unction getUsuarioLogado() {
-  const usuario = localStorage.getItem("usuario");
-  return usuario ? JSON.parse(usuario) : null;
-}
-
+// auth.js
 document.addEventListener("DOMContentLoaded", () => {
-  const usuario = getUsuarioLogado();
+  const usuarioSalvo = localStorage.getItem("usuario");
 
-  if (!usuario) {
+  if (!usuarioSalvo) {
     alert("Você precisa estar logado para acessar esta página.");
+    window.location.href = "/index.html"; // ajuste se necessário
+    return;
+  }
+
+  try {
+    JSON.parse(usuarioSalvo);
+  } catch (e) {
+    localStorage.removeItem("usuario");
     window.location.href = "/index.html";
   }
 });
