@@ -281,7 +281,7 @@ const mostrarNotificacao = (mensagem) => {
 const verificarAutenticacao = () => {
   const sessao = obterSessao();
   if (!sessao) {
-    window.location.href = '../../pages/Login/index.html';
+    window.location.href = 'index.html';
     return false;
   }
   return true;
@@ -389,4 +389,5 @@ try {
   inicializarUsuariosPadrão();
 } catch (erro) {
   console.error('❌ Erro ao inicializar usuários:', erro);
+
 }
