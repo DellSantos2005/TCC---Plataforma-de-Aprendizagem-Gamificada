@@ -3,6 +3,23 @@
 // utils.js - VERSÃO COM DESAFIOS ELETRO
 // ========================================
 
+// utils.js (no topo)
+(function () {
+  const repoName = "TCC---Plataforma-de-Aprendizagem-Gamificada"; // coloque o nome EXATO do repo
+  const isGitHubPages = location.hostname.endsWith("github.io");
+  const base = isGitHubPages ? `/${repoName}` : "";
+
+  window.urlApp = (path) => {
+    const p = path.startsWith("/") ? path : `/${path}`;
+    return base + p;
+  };
+
+  window.navegarPara = (path) => {
+    location.href = window.urlApp(path);
+  };
+})();
+
+
 // Estrutura padrão de um novo usuário
 const criarUsuarioPadrao = (usuario, senha, curso) => {
   // Definir desafios temáticos baseados no curso
@@ -391,3 +408,4 @@ try {
   console.error('❌ Erro ao inicializar usuários:', erro);
 
 }
+
