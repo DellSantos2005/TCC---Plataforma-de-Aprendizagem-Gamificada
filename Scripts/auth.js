@@ -1,53 +1,74 @@
-// ========================================
-// auth.js - Login no ROOT (index.html)
-// ========================================
+// Scripts/auth.js
+
+function validarUsuario(usuario) {
+  // nome.sobrenome
+  return /^[a-z]+\.[a-z]+$/.test(usuario);
+}
+
+function validarSenha(senha) {
+  // IFBA.XXXXXXXXXXX (11 dígitos)
+  return /^IFBA\.\d{11}$/.test(senha);
+}
+
+// "banco" simples só pra testar (troque pelo seu buscarUsuario/DB)
+function buscarUsuarioFake(usuario) {
+  const usuarios = {
+    "joao.silva": { usuario: "joao.silva", senha: "IFBA.12345678901", curso: "Informática" },
+    "ana.costa": { usuario: "ana.costa", senha: "IFBA.12345678904", curso: "Eletrotécnica" }
+  };
+  return usuarios[usuario] || null;
+}
+
+function salvarSessao(usuarioObj) {
+  localStorage.setItem("sessao", JSON.stringify({
+    usuario: usuarioObj.usuario,
+    curso: usuarioObj.curso,
+    loginEm: new Date().toISOString()
+  }));
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Se já estiver logado, vai direto pro Home
-  const sessao = obterSessao();
-  if (sessao) {
-    navegarPara("/pages/Principal/Home.html");
-    return;
-  }
-
   const form = document.getElementById("login-form");
-  const inputUsuario = document.getElementById("usuario");
-  const inputSenha = document.getElementById("senha");
+  const msg = document.getElementById("msg");
 
-  if (!form || !inputUsuario || !inputSenha) {
-    console.error("❌ Elementos do login não encontrados (form/usuario/senha).");
-    return;
-  }
+  if (!form) return;
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const usuario = inputUsuario.value.trim();
-    const senha = inputSenha.value.trim();
+    const usuario = document.getElementById("usuario")?.value.trim();
+    const senha = document.getElementById("senha")?.value.trim();
 
     if (!usuario || !senha) {
-      alert("⚠️ Preencha usuário e senha.");
+      msg.textContent = "Preencha usuário e senha.";
       return;
     }
 
-    const dados = buscarUsuario(usuario);
-    if (!dados || dados.senha !== senha) {
-      alert("❌ Usuário ou senha inválidos.");
+    if (!validarUsuario(usuario)) {
+      msg.textContent = "Usuário inválido. Use: nome.sobrenome (minúsculo).";
       return;
     }
 
-    salvarSessao(usuario);
+    if (!validarSenha(senha)) {
+      msg.textContent = "Senha inválida. Use: IFBA.XXXXXXXXXXX (11 dígitos).";
+      return;
+    }
 
-    try {
-      atualizarDiasSeguidos();
-    } catch (_) {}
+    const dadosUsuario = buscarUsuarioFake(usuario);
+    if (!dadosUsuario) {
+      msg.textContent = "Usuário não encontrado.";
+      return;
+    }
 
-    navegarPara("/pages/Principal/Home.html");
+    if (dadosUsuario.senha !== senha) {
+      msg.textContent = "Senha incorreta.";
+      return;
+    }
+
+    // OK
+    salvarSessao(dadosUsuario);
+
+    // Redireciona para Home (ajuste se sua estrutura for diferente)
+    window.location.href = "../Principal/Home.html";
   });
 });
-
-// Logout (se você usar em algum botão)
-window.realizarLogout = () => {
-  limparSessao();
-  navegarPara("/index.html");
-};
